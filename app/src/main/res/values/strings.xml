@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SpaceX Compose</string>
+    <string name="shared_preference_date_millis">dateMillis</string>
+    <string name="title">Название:</string>
+    <string name="missionName">Миссия:</string>
+    <string name="details">Детали миссии:</string>
+</resources>
