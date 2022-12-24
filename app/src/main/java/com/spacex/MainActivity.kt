@@ -1,9 +1,6 @@
 package com.spacex
 
 import android.os.Bundle
-import android.telecom.Call
-import android.util.EventLogTags
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -42,8 +39,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var missionFlag: Boolean = false
     lateinit var launches: List<Launch>
-    private var activity = this
 
+    @ExperimentalCoilApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.saveLaunchesToDB(this)
@@ -75,9 +72,9 @@ class MainActivity : ComponentActivity() {
                             )
 
                         }, content = {
-                            viewModel.observeDataIdDB(application as SpaceXApp).observe(this, {
+                            viewModel.observeDataIdDB(application as SpaceXApp).observe(this) {
                                 launches = it
-                            })
+                            }
 
                             NavHost(
                                 navController = navController,
@@ -85,14 +82,13 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 composable("launches") {
                                     ShowLaunches(
-                                        activity,
                                         navController,
                                         viewModel.observeDataIdDB(application as SpaceXApp)
                                     )
                                 }
                                 composable("launch") {
                                     missionFlag = true
-                                    ShowLaunchComposable(navController, launch)
+                                    ShowLaunchComposable(launch)
                                 }
                             }
                         }
@@ -104,7 +100,7 @@ class MainActivity : ComponentActivity() {
 
     @ExperimentalCoilApi
     @Composable
-    private fun ShowLaunchComposable(navController: NavHostController, launch: Launch?) {
+    private fun ShowLaunchComposable(launch: Launch?) {
         Scaffold(modifier = Modifier.padding(0.dp), content = {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -125,14 +121,14 @@ class MainActivity : ComponentActivity() {
 
     @ExperimentalCoilApi
     @Composable
-    private fun ShowLaunches(activity: MainActivity, navController: NavHostController, launches: LiveData<List<Launch>>) {
+    private fun ShowLaunches(navController: NavHostController, launchesLiveData: LiveData<List<Launch>>) {
         Scaffold(modifier = Modifier.padding(0.dp), content = {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val launches: List<Launch?> by launches.observeAsState(listOf())
+                val launches: List<Launch?> by launchesLiveData.observeAsState(listOf())
                 TableComposable(navController, launches)
             }
         })
@@ -185,11 +181,7 @@ class MainActivity : ComponentActivity() {
     @ExperimentalCoilApi
     @Composable
     fun Details(itemDetails: String?, missionPatch: String?) {
-        val detStable: String = if (itemDetails == null){
-            ""
-        } else {
-            itemDetails
-        }
+        val detStable: String = itemDetails ?: ""
         Text(
             text = getString(R.string.details)
                 .plus(" ")
@@ -208,6 +200,4 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
 }
-
