@@ -73,11 +73,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
-// Dagger Core
-    implementation "com.google.dagger:dagger:2.40.1"
-    kapt "com.google.dagger:dagger-compiler:2.40.1"
-
-// Dagger Android
+    // Dagger Android
     api 'com.google.dagger:dagger-android:2.37'
     api 'com.google.dagger:dagger-android-support:2.37'
     kapt 'com.google.dagger:dagger-android-processor:2.37'
